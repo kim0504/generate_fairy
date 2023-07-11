@@ -8,6 +8,8 @@ ex_fairy = [{"image":"","title":"제목입니다", "content":"내용입니다"},
             {"image":"","title":"제목입니다", "content":"내용입니다"}]
 
 with gr.Blocks() as demo:
+
+    """ ui """
     with gr.Column() as init:
         globals().update(ui.init_dis())
 
@@ -22,6 +24,10 @@ with gr.Blocks() as demo:
 
     with gr.Column(visible=False) as load:
         globals().update(ui.load_dis())
+
+
+
+    """ func """
 
     pages = [init, new_list, new, load_list, load]
 
@@ -47,4 +53,7 @@ with gr.Blocks() as demo:
     globals()['new_btn'].click(func.move_new_list, [], pages)
     globals()['load_btn'].click(func.move_load_list, [], pages)
 
-demo.launch()
+
+
+if __name__ == "__main__":
+    demo.launch()
