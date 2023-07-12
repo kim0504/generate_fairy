@@ -1,5 +1,8 @@
 import gradio as gr
-import ui, func
+import ui, func, initial
+import openai
+
+openai.api_key = initial.api_key
 
 ex_fairy = [{"image":"","title":"제목입니다", "content":"내용입니다"},
             {"image":"","title":"제목입니다", "content":"내용입니다"},
@@ -8,6 +11,10 @@ ex_fairy = [{"image":"","title":"제목입니다", "content":"내용입니다"},
             {"image":"","title":"제목입니다", "content":"내용입니다"}]
 
 with gr.Blocks() as demo:
+
+    """ state """
+    state = gr.State(initial.initial_state)
+    state_chatbot = gr.State([])
 
     """ ui """
     with gr.Column() as init:
@@ -31,27 +38,37 @@ with gr.Blocks() as demo:
 
     pages = [init, new_list, new, load_list, load]
 
-    home_btn = [key for key, value in globals().items() if key.endswith('home_btn')]
-    for btn in home_btn:
-        globals()[btn].click(func.move_init, [], pages)
-
-    new_select_btn = [key for key, value in globals().items() if key.startswith('new_list_select_btn')]
-    for btn in new_select_btn:
-        globals()[btn].click(func.move_new, [], pages)
-
-    load_select_btn = [key for key, value in globals().items() if key.startswith('load_list_select_btn')]
-    for btn in load_select_btn:
-        globals()[btn].click(func.move_load, [], pages)
-
-    select_btn = [key for key, value in globals().items() if key.startswith('new_select_btn')]
-    for btn in select_btn:
-        pass
-
-    globals()['new_list_select_btn1'].click(func.move_new, [], pages)
-    globals()['load_list_select_btn1'].click(func.move_load, [], pages)
-
     globals()['new_btn'].click(func.move_new_list, [], pages)
     globals()['load_btn'].click(func.move_load_list, [], pages)
+
+    home_btn = [value for key, value in globals().items() if key.endswith('home_btn')]
+    m_new_select_btn = [(key, value) for key, value in globals().items() if key.startswith('new_list_select_btn')]
+    select_btn = [value for key, value in globals().items() if key.startswith('new_select_btn')]
+    load_select_btn = [value for key, value in globals().items() if key.startswith('load_list_select_btn')]
+
+    for btn in home_btn:
+        btn.click(func.move_init,
+                  [],
+                  pages)
+
+    for key,btn in m_new_select_btn:
+        btn.click(func.move_new,
+                  [state, state_chatbot, gr.State(initial.system_msg_3pig), gr.State(key[-1])],
+                  [state, state_chatbot] + select_btn + pages)
+
+    for btn in select_btn:
+        btn.click(func.generate,
+                  [state, state_chatbot, btn],
+                  [state, state_chatbot, globals()['new_content']]+select_btn+[globals()['new_img']])
+
+    for btn in load_select_btn:
+        pass
+        # btn.click(func.move_load, [], pages)
+
+
+
+
+
 
 
 
