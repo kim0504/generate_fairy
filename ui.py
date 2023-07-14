@@ -19,6 +19,12 @@ def new_list_dis(fairy_list):
             locals()[f'new_list_select_btn{idx}'] = gr.Button("선택")
     return locals()
 
+def new_setting_dis():
+    set_radio = gr.Radio(['선택 안함', '로맨스', '공포', '판타지'])
+    set_slider = gr.Slider(label="자유도")
+    set_btn = gr.Button("완료")
+    return locals()
+
 def new_dis():
     new_home_btn = gr.Button("Home")
     with gr.Row():

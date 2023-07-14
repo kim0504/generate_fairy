@@ -16,12 +16,20 @@ with gr.Blocks() as demo:
     state = gr.State(initial.initial_state)
     state_chatbot = gr.State([])
 
+    selected_idx = gr.State()
+
+    radio = gr.State()
+    slider = gr.State()
+
     """ ui """
     with gr.Column() as init:
         globals().update(ui.init_dis())
 
     with gr.Column(visible=False) as new_list:
         globals().update(ui.new_list_dis(ex_fairy))
+
+    with gr.Column(visible=False) as user_set:
+        globals().update(ui.new_setting_dis())
 
     with gr.Column(visible=False) as new:
         globals().update(ui.new_dis())
@@ -35,11 +43,11 @@ with gr.Blocks() as demo:
 
 
     """ func """
+    pages = [init, new_list, user_set, new, load_list, load]
 
-    pages = [init, new_list, new, load_list, load]
-
-    globals()['new_btn'].click(func.move_new_list, [], pages)
+    globals()['new_btn'].click(func.move_new_set, [], pages)
     globals()['load_btn'].click(func.move_load_list, [], pages)
+    globals()['set_btn'].click(func.move_new_list, [globals()['set_radio'], globals()['set_slider']], pages)
 
     home_btn = [value for key, value in globals().items() if key.endswith('home_btn')]
     m_new_select_btn = [(key, value) for key, value in globals().items() if key.startswith('new_list_select_btn')]
@@ -62,13 +70,8 @@ with gr.Blocks() as demo:
                   [state, state_chatbot, globals()['new_content']]+select_btn+[globals()['new_img']])
 
     for btn in load_select_btn:
+        """ 기능 구현 """
         pass
-        # btn.click(func.move_load, [], pages)
-
-
-
-
-
 
 
 

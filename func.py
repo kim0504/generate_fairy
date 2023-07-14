@@ -3,6 +3,8 @@ import openai
 import initial, image_generate
 
 count = 1
+genre = ''
+degree = 1
 
 def generate_select(state, state_chatbot, text, idx):
     idx=int(idx)
@@ -71,27 +73,29 @@ def generate(state, state_chatbot, text):
     trans = image_generate.get_translate(msg)
     des = image_generate.describe(trans)
     img = image_generate.image_generate(des)
-    print(state)
-    print(state_chatbot)
-    print(msg)
-    print("select", len(select), select)
+
     return state, state_chatbot, msg, *select, img
 
 def change_btn():
     return gr.update(visible=True), gr.update(visible=False)
 
 def move_init():
-    return gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+    return gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
 
-def move_new_list():
-    return gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+def move_new_list(radio, slider):
+    global genre, degree
+    genre, degree = radio, slider
+    return gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+
+def move_new_set():
+    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
 
 def move_new(state, state_chatbot, text, idx):
     aaa = generate_select(state, state_chatbot, text, idx)
-    return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
+    return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
 def move_load_list():
-    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False)
+    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False)
 
 def move_load():
-    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True)
+    return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True)
