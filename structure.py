@@ -53,6 +53,7 @@ with gr.Blocks() as demo:
     m_new_select_btn = [(key, value) for key, value in globals().items() if key.startswith('new_list_select_btn')]
     select_btn = [value for key, value in globals().items() if key.startswith('new_select_btn')]
     load_select_btn = [value for key, value in globals().items() if key.startswith('load_list_select_btn')]
+    change_columns = [globals()['new_select_col'], globals()['new_save_col']]
 
     for btn in home_btn:
         btn.click(func.move_init,
@@ -67,13 +68,16 @@ with gr.Blocks() as demo:
     for btn in select_btn:
         btn.click(func.generate,
                   [state, state_chatbot, btn],
-                  [state, state_chatbot, globals()['new_content']]+select_btn+[globals()['new_img']])
+                  change_columns + [state, state_chatbot, globals()['new_content']]+select_btn+[globals()['new_img']])
 
     for btn in load_select_btn:
-        """ 기능 구현 """
-        pass
+        btn.click(func.move_load,
+                  [],
+                  pages)
 
-
+    load_btns = [globals()['load_prev_btn'], globals()['load_prev_btn']]
+    globals()['load_prev_btn'].click(func.next_content, load_btns, load_btns)
+    globals()['load_next_btn'].click(func.prev_content, load_btns, load_btns)
 
 if __name__ == "__main__":
     demo.launch()

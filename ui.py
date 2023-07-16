@@ -31,8 +31,8 @@ def new_dis():
         new_img = gr.Image()
         new_content = gr.Textbox(value=initial.system_msg_3pig[0], lines=10)
 
-    select_col = gr.Column()
-    with select_col:
+    new_select_col = gr.Column()
+    with new_select_col:
         with gr.Row():
             new_select_btn_1 = gr.Button("1")
             new_select_btn_2 = gr.Button("2")
@@ -40,7 +40,8 @@ def new_dis():
             new_select_btn_3 = gr.Button("3")
             new_select_btn_4 = gr.Button("4")
 
-    with gr.Column(visible=False):
+    new_save_col = gr.Column(visible=False)
+    with new_save_col:
         new_save_btn = gr.Button("Save")
 
     return locals()
@@ -59,13 +60,8 @@ def load_list_dis(fairy_list):
 def load_dis():
     load_home_btn = gr.Button("Home")
     with gr.Row():
+        load_prev_btn = gr.Button("이전")
         load_img = gr.Image()
         load_content = gr.Textbox()
-    with gr.Column():
-        with gr.Row():
-            load_select_btn_1 = gr.Button("1")
-            load_select_btn_2 = gr.Button("2")
-        with gr.Row():
-            load_select_btn_3 = gr.Button("3")
-            load_select_btn_4 = gr.Button("4")
+        load_next_btn = gr.Button("다음")
     return locals()

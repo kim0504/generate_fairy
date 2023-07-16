@@ -2,8 +2,6 @@ import gradio as gr
 import openai
 import requests
 
-
-
 def get_translate(text):
     client_id = "9aaodRv2BMjg6IVHi913" # <-- client_id 기입
     client_secret = "WaDJ70ePfT" # <-- client_secret 기입
@@ -46,7 +44,7 @@ def describe(msg):
     return described_msg
 
 #openai.api_key = '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'
-openai.api_key = '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'
+openai.api_key = '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'
 system_msg_3pig = '아기 돼지 삼형제가 살았어요. 하루는 엄마 돼지가 말했지요.\n' \
                   ' 얘들아, 이제 너희는 다 컸다. 나가서 집을 지어 살려무나.\n' \
                   ' 첫째 돼지는 노는 걸 좋아했지요.\n' \
@@ -61,9 +59,9 @@ assis_msg_3pig = '다음의 지시사항에 따라 4개의 선택지를 만들�
 
 initial_state = [
     {'role': 'system', 'content': 'Act as a kindergarten teacher who reads fairy tales.'},
-    {'role': 'assistant', 'content': system_msg_3pig},
-    {'role': 'user', 'content': assis_msg_3pig}]
-
+    # {'role': 'assistant', 'content': system_msg_3pig},
+    # {'role': 'user', 'content': assis_msg_3pig}]
+    ]
 prompt = '내용에 대한 150글자 내외 분량의 후속 이야기를 작성하고 그에 대한 선택지를 같은 형식으로 4개 제시해줘'
 end_prompt = '내용에 대한 150글자 내외 분량의 후속 이야기를 작성하고 선택지를 제시하지 않고, 결말을 내줘'
 end_count=4 #최대 선택 횟수
