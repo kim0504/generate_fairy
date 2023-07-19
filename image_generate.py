@@ -42,3 +42,8 @@ def describe(msg):
     described_msg: str = res['choices'][0]['message']['content']
     return described_msg
 
+def generate_img(msg):
+    trans = get_translate(msg)
+    des = describe(trans)
+    img = image_generate(des)
+    return img
