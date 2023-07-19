@@ -1,21 +1,30 @@
 import gradio as gr
 import openai
+import json
 import initial, image_generate
 
 count = 1
+
 genre = ''
 degree = 1
-full_content = []
+
+generate_info = {"image": [],
+                 "title": "",
+                 "abstract": "",
+                 "content": []}
+
 
 def generate_select(state, state_chatbot, idx):
-    global full_content
+    global generate_info
     """save func"""
-    full_content.append(initial.fairy_dict[idx]['content'])
+    generate_info['title'] = initial.fairy_dict[idx]['title']
+    generate_info['abstract'] = initial.fairy_dict[idx]['abstract']
+    generate_info['content'].append(initial.fairy_dict[idx]['content'])
 
     """gpt func"""
     messages = state + [{
         'role': 'user',
-        'content': "\n".join([initial.fairy_dict[idx]['content'], initial.select_prompt])
+        'content': "\n".join([initial.fairy_dict[idx]['content'], initial.prompt, initial.select_prompt])
     }]
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
@@ -40,7 +49,7 @@ def generate_select(state, state_chatbot, idx):
     return state, state_chatbot, textbox, *msg
 
 def generate(state, state_chatbot, text):
-    global count, full_content
+    global count
     if count<initial.end_count:
         messages = state + [{
             'role': 'user',
@@ -73,18 +82,24 @@ def generate(state, state_chatbot, text):
     if count<=initial.end_count:
         select = msg.split("p")
         msg = select[0]
-        full_content.append(msg)
+        generate_info['content'].append(msg)
         select = [m.strip() for m in select[1:]]
         img = image_generate.generate_img(msg)
         return gr.update(visible=True), gr.update(visible=False), state, state_chatbot, msg, *select, img
-    else :
+    else:
         select = ["end" for i in range(4)]
-        full_content.append(msg)
+        generate_info['content'].append(msg)
         img = image_generate.generate_img(msg)
         return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img
 
 def save():
-    print(full_content)
+    with open('./save_fairy.json', 'r', encoding='UTF8') as f:
+        jso = json.load(f)
+
+        jso[str(len(jso))] = generate_info
+
+    with open('./save_fairy.json', 'w', encoding='UTF8') as f:
+        json.dump(jso, f, indent=2, ensure_ascii=False)
 
 def next_content(image, text):
     pass
