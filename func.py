@@ -1,43 +1,36 @@
 import gradio as gr
 import openai
-from playsound import playsound
-import os
-from gtts import gTTS
-
 import initial, image_generate
 
 count = 1
 genre = ''
 degree = 1
-full_content = ""
+full_content = []
 
-def generate_select(state, state_chatbot, text, idx):
+def generate_select(state, state_chatbot, idx):
     global full_content
-    idx=int(idx)
-    full_content=full_content+initial.system_msg_3pig[idx]
-    play_audio(text[idx])
+    full_content.append(initial.fairy_dict[idx]['content'])
     messages = state + [{
         'role': 'user',
-        'content': "\n".join([text[idx], initial.assis_msg_3pig])
+        'content': "\n".join([initial.fairy_dict[idx]['content'], initial.select_prompt])
     }]
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
         messages=messages,
     )
-    msg: str = res['choices'][0]['message']['content']
+    msg = res['choices'][0]['message']['content']
+
     new_state = [{
         'role': 'user',
-        'content': text[idx]
+        'content': initial.fairy_dict[idx]['content']
     }, {
         'role': 'assistant',
         'content': msg
     }]
     state = state + new_state
-    state_chatbot = state_chatbot + [(text[idx], msg)]
-    # print(msg.split("p"))
-    msg = msg.split("p")
-    del msg[0]
-    msg = [m.strip() for m in msg if m.strip()]
+    state_chatbot = state_chatbot + [(initial.fairy_dict[idx]['content'], msg)]
+    msg = [m.strip() for m in msg.split("p")[1:] if m.strip()]
+
     return state, state_chatbot, *msg
 
 def generate(state, state_chatbot, text):
@@ -45,7 +38,7 @@ def generate(state, state_chatbot, text):
     if count<initial.end_count:
         messages = state + [{
             'role': 'user',
-            'content': "\n".join([text, initial.prompt, initial.assis_msg_3pig])
+            'content': "\n".join([text, initial.prompt, initial.select_prompt])
         }]
     else:
         messages = state + [{
@@ -59,7 +52,6 @@ def generate(state, state_chatbot, text):
         messages=messages,
     )
     msg = res['choices'][0]['message']['content']
-    play_audio(msg)
     new_state = [{
         'role': 'user',
         'content': text
@@ -72,27 +64,15 @@ def generate(state, state_chatbot, text):
     if count<=initial.end_count:
         select = msg.split("p")
         msg = select[0]
-        full_content = full_content + f"${msg}"
+        full_content.append(msg)
         select = [m.strip() for m in select[1:]]
-        trans = image_generate.get_translate(msg)
-        des = image_generate.describe(trans)
-        img = image_generate.image_generate(des)
+        img = image_generate.generate_img(msg)
         return gr.update(visible=True), gr.update(visible=False), state, state_chatbot, msg, *select, img
     else :
         select = ["end" for i in range(4)]
-        full_content = full_content+f"${msg}"
-        print(full_content)
-        trans = image_generate.get_translate(msg)
-        des = image_generate.describe(trans)
-        img = image_generate.image_generate(des)
+        full_content.append(msg)
+        img = image_generate.generate_img(msg)
         return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img
-
-def play_audio(text):
-    tts = gTTS(text=text, lang='ko')
-    filename = 'text.mp3'
-    tts.save(filename)
-    playsound(filename)
-    os.remove(filename)
 
 def save():
     file = '../ai_internship/save.txt'
@@ -116,8 +96,9 @@ def move_new_list(radio, slider):
 def move_new_set():
     return gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
 
-def move_new(state, state_chatbot, text, idx):
-    aaa = generate_select(state, state_chatbot, text, idx)
+def move_new(state, state_chatbot, idx):
+    aaa = generate_select(state, state_chatbot, idx)
+    print(aaa)
     return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
 def move_load_list():
