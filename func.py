@@ -1,14 +1,21 @@
 import gradio as gr
 import openai
+from playsound import playsound
+import os
+from gtts import gTTS
+
 import initial, image_generate
 
 count = 1
 genre = ''
 degree = 1
-full_content = initial.assis_msg_3pig
+full_content = ""
 
 def generate_select(state, state_chatbot, text, idx):
+    global full_content
     idx=int(idx)
+    full_content=full_content+initial.system_msg_3pig[idx]
+    play_audio(text[idx])
     messages = state + [{
         'role': 'user',
         'content': "\n".join([text[idx], initial.assis_msg_3pig])
@@ -52,6 +59,7 @@ def generate(state, state_chatbot, text):
         messages=messages,
     )
     msg = res['choices'][0]['message']['content']
+    play_audio(msg)
     new_state = [{
         'role': 'user',
         'content': text
@@ -79,14 +87,23 @@ def generate(state, state_chatbot, text):
         img = image_generate.image_generate(des)
         return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img
 
+def play_audio(text):
+    tts = gTTS(text=text, lang='ko')
+    filename = 'text.mp3'
+    tts.save(filename)
+    playsound(filename)
+    os.remove(filename)
+
+def save():
+    file = '../ai_internship/save.txt'
+    with open(file, 'a', encoding='UTF8') as f:
+        f.write(full_content)
+
 def next_content(image, text):
     pass
 
 def prev_content(image, text):
     pass
-
-def save_fairy():
-    global full_content
 
 def move_init():
     return gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
@@ -100,7 +117,6 @@ def move_new_set():
     return gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
 
 def move_new(state, state_chatbot, text, idx):
-    print(count, initial.end_count)
     aaa = generate_select(state, state_chatbot, text, idx)
     return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
