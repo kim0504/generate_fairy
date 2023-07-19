@@ -9,7 +9,10 @@ full_content = []
 
 def generate_select(state, state_chatbot, idx):
     global full_content
+    """save func"""
     full_content.append(initial.fairy_dict[idx]['content'])
+
+    """gpt func"""
     messages = state + [{
         'role': 'user',
         'content': "\n".join([initial.fairy_dict[idx]['content'], initial.select_prompt])
@@ -29,9 +32,12 @@ def generate_select(state, state_chatbot, idx):
     }]
     state = state + new_state
     state_chatbot = state_chatbot + [(initial.fairy_dict[idx]['content'], msg)]
+
+    """select func"""
+    textbox = initial.fairy_dict[idx]['content']
     msg = [m.strip() for m in msg.split("p")[1:] if m.strip()]
 
-    return state, state_chatbot, *msg
+    return state, state_chatbot, textbox, *msg
 
 def generate(state, state_chatbot, text):
     global count, full_content
@@ -45,13 +51,14 @@ def generate(state, state_chatbot, text):
             'role': 'user',
             'content': "\n".join([text, initial.end_prompt])
         }]
-    count += 1
-
+    print(f"text : {text}")
+    print(messages)
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
         messages=messages,
     )
     msg = res['choices'][0]['message']['content']
+    print(f"msg {msg}")
     new_state = [{
         'role': 'user',
         'content': text
@@ -61,6 +68,8 @@ def generate(state, state_chatbot, text):
     }]
     state = state + new_state
     state_chatbot = state_chatbot + [(text, msg)]
+
+    count += 1
     if count<=initial.end_count:
         select = msg.split("p")
         msg = select[0]
@@ -75,9 +84,7 @@ def generate(state, state_chatbot, text):
         return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img
 
 def save():
-    file = '../ai_internship/save.txt'
-    with open(file, 'a', encoding='UTF8') as f:
-        f.write(full_content)
+    print(full_content)
 
 def next_content(image, text):
     pass
@@ -98,7 +105,6 @@ def move_new_set():
 
 def move_new(state, state_chatbot, idx):
     aaa = generate_select(state, state_chatbot, idx)
-    print(aaa)
     return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
 def move_load_list():
