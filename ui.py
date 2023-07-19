@@ -1,5 +1,6 @@
 import gradio as gr
-import initial, func
+import initial
+
 def init_dis():
     logo = gr.Image()
     with gr.Row():
@@ -8,21 +9,21 @@ def init_dis():
         option_btn = gr.Button("Option")
     return locals()
 
-def new_list_dis(fairy_list):
-    new_list_home_btn = gr.Button("Home")
-    for idx,fairy in enumerate(fairy_list):
-        with gr.Row():
-            locals()[f'new_list_img{idx}'] = gr.Image()
-            with gr.Column():
-                locals()[f'new_list_title{idx}'] = gr.Textbox(fairy['title'])
-                locals()[f'new_list_content{idx}'] = gr.Textbox(fairy['content'])
-            locals()[f'new_list_select_btn{idx}'] = gr.Button("선택")
-    return locals()
-
 def new_setting_dis():
     set_radio = gr.Radio(['선택 안함', '로맨스', '공포', '판타지'])
     set_slider = gr.Slider(label="자유도")
     set_btn = gr.Button("완료")
+    return locals()
+
+def new_list_dis(fairy_list):
+    new_list_home_btn = gr.Button("Home")
+    for key,val in fairy_list.items():
+        with gr.Row():
+            locals()[f'new_list_img{key}'] = gr.Image()
+            with gr.Column():
+                locals()[f'new_list_title{key}'] = gr.Textbox(val['title'])
+                locals()[f'new_list_content{key}'] = gr.Textbox(val['abstract'])
+            locals()[f'new_list_select_btn{key}'] = gr.Button("선택")
     return locals()
 
 def new_dis():
