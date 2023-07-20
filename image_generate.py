@@ -1,6 +1,11 @@
 import openai
 import requests
 
+from PIL import Image
+import urllib
+from urllib import request
+from io import BytesIO
+
 def get_translate(text):
     client_id = "9aaodRv2BMjg6IVHi913" # <-- client_id 기입
     client_secret = "WaDJ70ePfT" # <-- client_secret 기입
@@ -36,7 +41,7 @@ def image_generate(msg):
 def describe(msg):
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        messages=[{'role': 'user', 'content': "Describe this content visually in one sentence."},
+        messages=[{'role': 'user', 'content': "Please describe this situation visually in 1 sentence."},
                   {'role': 'assistant', 'content': msg}]
     )
     described_msg: str = res['choices'][0]['message']['content']
@@ -46,4 +51,14 @@ def generate_img(msg):
     trans = get_translate(msg)
     des = describe(trans)
     img = image_generate(des)
+    return img
+
+def convert_image(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    res = request.urlopen(req).read()
+    image = Image.open(BytesIO(res))
+    return image
+
+def open(file):
+    img = Image.open(file)
     return img

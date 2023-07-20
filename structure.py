@@ -4,7 +4,7 @@ import openai
 
 openai.api_key = initial.api_key
 
-with gr.Blocks() as demo:
+with gr.Blocks(css=".gradio-container textarea {font-size: 24px !important}") as demo:
 
     """ state """
     state = gr.State(initial.initial_state) #gpt 초기 설정
@@ -25,8 +25,7 @@ with gr.Blocks() as demo:
         globals().update(ui.new_dis())
 
     with gr.Column(visible=False) as load_list: #저장된 동화 리스트
-        # globals().update(ui.load_list_dis(ex_fairy))
-        globals().update(ui.load_dis())
+        globals().update(ui.load_list_dis(func.load_save_fairy()))
 
     with gr.Column(visible=False) as load: #저장된 동화
         globals().update(ui.load_dis())
@@ -43,7 +42,7 @@ with gr.Blocks() as demo:
     home_btn = [value for key, value in globals().items() if key.endswith('home_btn')] #각 화면에 있는 홈 버튼
     m_new_select_btn = [(key, value) for key, value in globals().items() if key.startswith('new_list_select_btn')] #동화 선택 버튼
     select_btn = [value for key, value in globals().items() if key.startswith('new_select_btn')] #선택지 버튼
-    load_select_btn = [value for key, value in globals().items() if key.startswith('load_list_select_btn')] #동화 선택 버튼
+    load_select_btn = [(key, value) for key, value in globals().items() if key.startswith('load_list_select_btn')] #동화 선택 버튼
     change_columns = [globals()['new_select_col'], globals()['new_save_col']] #선택지, 저장 버튼
 
     for btn in home_btn:
@@ -54,23 +53,23 @@ with gr.Blocks() as demo:
     for key,btn in m_new_select_btn:
         btn.click(func.move_new,
                   [state, state_chatbot, gr.State(key[-1])],
-                  [state, state_chatbot, globals()['new_content']] + select_btn + pages)
+                  [state, state_chatbot, globals()['new_content'], globals()['new_img']] + select_btn + pages)
 
     for btn in select_btn:
         btn.click(func.generate,
                   [state, state_chatbot, btn],
                   change_columns + [state, state_chatbot, globals()['new_content']]+select_btn+[globals()['new_img']])
 
-    for btn in load_select_btn:
+    for key,btn in load_select_btn:
         btn.click(func.move_load,
-                  [],
-                  pages)
+                  gr.State(key[-1]),
+                  [globals()['load_img'], globals()['load_content']]+pages)
 
     globals()['new_save_btn'].click(func.save)
 
     load_btns = [globals()['load_prev_btn'], globals()['load_prev_btn']]
-    globals()['load_prev_btn'].click(func.next_content, load_btns, load_btns)
-    globals()['load_next_btn'].click(func.prev_content, load_btns, load_btns)
+    globals()['load_prev_btn'].click(func.load_prev_content, [], [globals()['load_img'], globals()['load_content']])
+    globals()['load_next_btn'].click(func.load_next_content, [], [globals()['load_img'], globals()['load_content']])
 
 if __name__ == "__main__":
     demo.launch()

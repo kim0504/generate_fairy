@@ -1,8 +1,8 @@
 import gradio as gr
-import initial
+import initial, image_generate
 
 def init_dis():
-    logo = gr.Image()
+    logo = gr.Image(image_generate.open("/".join([initial.image_path, "logo.jpg"])))
     with gr.Row():
         new_btn = gr.Button("New")
         load_btn = gr.Button("Load")
@@ -11,7 +11,7 @@ def init_dis():
 
 def new_setting_dis():
     set_radio = gr.Radio(['선택 안함', '로맨스', '공포', '판타지'])
-    set_slider = gr.Slider(label="자유도")
+    set_slider = gr.Slider(label="자유도", maximum=2)
     set_btn = gr.Button("완료")
     return locals()
 
@@ -19,7 +19,7 @@ def new_list_dis(fairy_list):
     new_list_home_btn = gr.Button("Home")
     for key,val in fairy_list.items():
         with gr.Row():
-            locals()[f'new_list_img{key}'] = gr.Image()
+            locals()[f'new_list_img{key}'] = gr.Image(image_generate.open("/".join([initial.image_path, f"{val['title']}.jpg"])))
             with gr.Column():
                 locals()[f'new_list_title{key}'] = gr.Textbox(val['title'])
                 locals()[f'new_list_content{key}'] = gr.Textbox(val['abstract'])
@@ -49,13 +49,13 @@ def new_dis():
 
 def load_list_dis(fairy_list):
     load_list_home_btn = gr.Button("Home")
-    for idx,fairy in enumerate(fairy_list):
+    for key,val in fairy_list.items():
         with gr.Row():
-            locals()[f'load_list_img{idx}'] = gr.Image()
+            locals()[f'load_list_img{key}'] = gr.Image()
             with gr.Column():
-                locals()[f'load_list_title{idx}'] = gr.Textbox(fairy['title'])
-                locals()[f'load_list_content{idx}'] = gr.Textbox(fairy['content'])
-            locals()[f'load_list_select_btn{idx}'] = gr.Button("선택")
+                locals()[f'load_list_title{key}'] = gr.Textbox(val['title'])
+                locals()[f'load_list_content{key}'] = gr.Textbox(val['abstract'])
+            locals()[f'load_list_select_btn{key}'] = gr.Button("선택")
     return locals()
 
 def load_dis():
