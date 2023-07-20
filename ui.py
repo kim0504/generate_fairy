@@ -30,7 +30,7 @@ def new_dis():
     new_home_btn = gr.Button("Home")
     with gr.Row():
         new_img = gr.Image()
-        new_content = gr.Textbox(value=initial.system_msg_3pig[0], lines=10)
+        new_content = gr.Textbox(value="", lines=10)
 
     new_select_col = gr.Column()
     with new_select_col:

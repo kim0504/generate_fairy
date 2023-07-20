@@ -54,7 +54,7 @@ with gr.Blocks() as demo:
     for key,btn in m_new_select_btn:
         btn.click(func.move_new,
                   [state, state_chatbot, gr.State(key[-1])],
-                  [state, state_chatbot] + select_btn + pages)
+                  [state, state_chatbot, globals()['new_content']] + select_btn + pages)
 
     for btn in select_btn:
         btn.click(func.generate,
