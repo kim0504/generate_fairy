@@ -6,7 +6,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import initial, image_generate
-
+import audio_generate as audio
 count = 1
 
 genre = ''
@@ -57,8 +57,10 @@ def generate_select(state, state_chatbot, idx):
     """select func"""
     textbox = initial.fairy_dict[idx]['content']
     msg = [m.strip() for m in msg.split("p")[1:] if m.strip()]
-    # print(f"{textbox}\n{msg}\n{img}")
-    return state, state_chatbot, textbox, img, *msg
+
+    filename = audio.generate([textbox]+msg)
+
+    return state, state_chatbot, textbox, img, filename, *msg,
 
 def generate(state, state_chatbot, text):
     global count
@@ -97,14 +99,15 @@ def generate(state, state_chatbot, text):
         img = image_generate.generate_img(msg)
         generate_info['content'].append(msg)
         temp_image.append(img)
-
-        return gr.update(visible=True), gr.update(visible=False), state, state_chatbot, msg, *select, img
+        filename = audio.generate([msg] + select)
+        return gr.update(visible=True), gr.update(visible=False), state, state_chatbot, msg, *select, img, filename
     else:
         select = ["end" for i in range(4)]
         img = image_generate.generate_img(msg)
         generate_info['content'].append(msg)
         temp_image.append(img)
-        return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img
+        filename = audio.generate([msg])
+        return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img, filename
 
 def load_save_fairy():
     with open('./save_fairy.json', 'r', encoding='UTF8') as f:
@@ -153,6 +156,7 @@ def move_new(state, state_chatbot, idx):
     return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
 def move_load_list():
+
     return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False)
 
 def move_load(idx):
