@@ -41,7 +41,7 @@ def image_generate(msg):
 def describe(msg):
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        messages=[{'role': 'user', 'content': "Please describe this situation visually in 1 sentence."},
+        messages=[{'role': 'user', 'content': "Describe this content visually in one sentence."},
                   {'role': 'assistant', 'content': msg}]
     )
     described_msg: str = res['choices'][0]['message']['content']
