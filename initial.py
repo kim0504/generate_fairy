@@ -1,6 +1,6 @@
 import json
 
-api_key = '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'
+api_key = '<key>>'
 
 initial_state = [{'role': 'system', 'content': 'Act as a kindergarten teacher who reads fairy tales.'}]
 
