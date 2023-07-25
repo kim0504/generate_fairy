@@ -32,7 +32,7 @@ def new_setting_dis():
 
 def new_list_dis(fairy_list):
     new_list_home_btn = gr.Button("Home", elem_id="warning")
-    for key,val in fairy_list.items():
+    for key,val in enumerate(fairy_list):
         with gr.Row():
             locals()[f'new_list_img{key}'] = gr.Image(image_generate.open("/".join([initial.image_path, f"{val['title']}.jpg"])), height=300, show_label=False, container=False)
             with gr.Column():
@@ -73,10 +73,10 @@ def new_dis():
 
 def load_list_dis(fairy_list):
     load_list_home_btn = gr.Button("Home")
-    for key,val in fairy_list.items():
+    for key,val in enumerate(fairy_list):
         with gr.Row():
             with gr.Column(scale=1):
-                locals()[f'load_list_img{key}'] = gr.Image(image_generate.open("/".join([initial.save_image_path,key,"0.jpg"])), height=300, show_label=False, container=False)
+                locals()[f'load_list_img{key}'] = gr.Image(image_generate.open("/".join([initial.save_image_path,str(key),"0.jpg"])), height=300, show_label=False, container=False)
             with gr.Column(scale=2):
                 with gr.Column():
                     locals()[f'load_list_title{key}'] = gr.Textbox(val['title'], show_label=False, container=False)

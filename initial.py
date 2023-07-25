@@ -1,6 +1,6 @@
 import json
 
-api_key = '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'
+api_key = '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'
 
 initial_state = [{'role': 'system', 'content': 'Act as a kindergarten teacher who reads fairy tales.'}]
 
@@ -16,7 +16,7 @@ end_count=4 #최대 선택 횟수
 
 count=0 #선택 횟수
 
-with open('../generate_fairy/fairy.json', encoding='UTF8') as f:
+with open('./fairy.json', encoding='UTF8') as f:
     fairy_dict = json.load(f)
 
 image_path = "./image"

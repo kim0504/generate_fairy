@@ -1,5 +1,5 @@
 import gradio as gr
-import ui, func, initial, audio_generate
+import ui, func, initial, firebase
 import openai
 
 openai.api_key = initial.api_key
@@ -16,7 +16,7 @@ with gr.Blocks(css="./css.css") as demo:
         globals().update(ui.init_dis())
 
     with gr.Column(visible=False) as new_list: #동화 생성 리스트
-        globals().update(ui.new_list_dis(initial.fairy_dict))
+        globals().update(ui.new_list_dis(firebase.get_default()))
 
     with gr.Column(visible=False) as user_set: #동화 세팅
         globals().update(ui.new_setting_dis())
@@ -25,7 +25,7 @@ with gr.Blocks(css="./css.css") as demo:
         globals().update(ui.new_dis())
 
     with gr.Column(visible=False) as load_list: #저장된 동화 리스트
-        globals().update(ui.load_list_dis(func.load_save_fairy()))
+        globals().update(ui.load_list_dis(firebase.get_save()))
 
     with gr.Column(visible=False) as load: #저장된 동화
         globals().update(ui.load_dis())
