@@ -1,4 +1,4 @@
-### Interactice fairy generator
+# Interactive fairy generator
 
 - **기간** : 2023.07
 - **주제** : GPT api를 활용한 인터렉티브 창장 동화 생성
