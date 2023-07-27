@@ -1,27 +1,21 @@
 import firebase_admin
 from firebase_admin import credentials, db, firestore
+import initial
 
-
-cred = credentials.Certificate('<key>')
-# firebase_admin.initialize_app(cred)
-# db = firestore.client()
+cred = credentials.Certificate(initial.firebase_json)
 firebase_admin.initialize_app(cred,{
-    'databaseURL' : '<address>'})
+    'databaseURL' : initial.firebase_url})
 
-
-
-def get_default():
-    dic = db.reference('default') #기본 위치 지정
+def get_default(): #기본 데이터 불러오기
+    dic = db.reference('default')
     return dic.get()
 
-
-def get_save():
-    dic = db.reference('save')  # 기본 위치 지정
+def get_save(): #동화 불러오기
+    dic = db.reference('save')
     return dic.get()
 
-def save(save_dict):
-    dic = db.reference('save')  # 기본 위치 지정
+def save(save_dict): #동화 저장하기
+    dic = db.reference('save')
     dic.update(save_dict)
 
-for i in get_save():
-    print(i)
+fairy_dict = get_default()

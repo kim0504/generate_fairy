@@ -7,6 +7,7 @@ import requests
 from io import BytesIO
 import initial, image_generate
 import audio_generate as audio
+import firebase
 count = 1
 
 genre = ''
@@ -25,14 +26,14 @@ generate_info = {"title": "",
 def generate_select(state, state_chatbot, idx):
     global generate_info, degree
     """save func"""
-    generate_info['title'] = initial.fairy_dict[idx]['title']
-    generate_info['abstract'] = initial.fairy_dict[idx]['abstract']
-    generate_info['content'].append(initial.fairy_dict[idx]['content'])
+    generate_info['title'] = firebase.fairy_dict[idx]['title']
+    generate_info['abstract'] = firebase.fairy_dict[idx]['abstract']
+    generate_info['content'].append(firebase.fairy_dict[idx]['content'])
 
     """gpt func"""
     messages = state + [{
         'role': 'user',
-        'content': "\n".join([initial.fairy_dict[idx]['content'], genre, initial.select_prompt])
+        'content': "\n".join([firebase.fairy_dict[idx]['content'], genre, initial.select_prompt])
     }]
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
@@ -43,19 +44,19 @@ def generate_select(state, state_chatbot, idx):
     print(msg)
     new_state = [{
         'role': 'user',
-        'content': initial.fairy_dict[idx]['content']
+        'content': firebase.fairy_dict[idx]['content']
     }, {
         'role': 'assistant',
         'content': msg
     }]
     state = state + new_state
-    state_chatbot = state_chatbot + [(initial.fairy_dict[idx]['content'], msg)]
+    state_chatbot = state_chatbot + [(firebase.fairy_dict[idx]['content'], msg)]
 
-    img = image_generate.generate_img(initial.fairy_dict[idx]['content'])
+    img = image_generate.generate_img(firebase.fairy_dict[idx]['content'])
     temp_image.append(img)
 
     """select func"""
-    textbox = initial.fairy_dict[idx]['content']
+    textbox = firebase.fairy_dict[idx]['content']
     msg = [m.strip() for m in msg.split("p")[1:] if m.strip()]
 
     filename = audio.generate([textbox]+msg)
@@ -64,7 +65,7 @@ def generate_select(state, state_chatbot, idx):
 
 def generate(state, state_chatbot, text):
     global count
-    if count<initial.end_count:
+    if count<initial.count:
         messages = state + [{
             'role': 'user',
             'content': "\n".join([text, genre, initial.prompt, initial.select_prompt])
@@ -72,7 +73,7 @@ def generate(state, state_chatbot, text):
     else:
         messages = state + [{
             'role': 'user',
-            'content': "\n".join([text, initial.end_prompt])
+            'content': "\n".join([text, initial.prompt])
         }]
     res = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
@@ -92,7 +93,7 @@ def generate(state, state_chatbot, text):
     state_chatbot = state_chatbot + [(text, msg)]
 
     count += 1
-    if count<=initial.end_count:
+    if count<=initial.count:
         select = msg.split("p")
         msg = select[0]
         select = [m.strip() for m in select[1:]]
