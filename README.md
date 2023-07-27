@@ -1,7 +1,3 @@
-<p align="center"> 
-  <img src="https://user-images.githubusercontent.com/81956540/230845085-502a0d35-1d1a-48c5-8870-da2949714e36.png" width="50%" height="50%" align='center'/>
-</p>
-
 ### Interactice fairy generator
 
 - **기간** : 2023.07
