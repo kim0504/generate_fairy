@@ -8,8 +8,7 @@
   <img src="https://github.com/kim0504/generate_fairy/assets/81956540/ab4f58d9-68e2-4b93-a9e7-a717020c441c.jpg" width="70%" height="70%" align='center'/>
 </p>
 
-<br></br>
-### How to use
+## How to use
 
 - open api 발급
 
@@ -33,7 +32,7 @@ firebase_url = "<firebase url>" #please fill in this part
 
 - main.py 실행
 <br></br>
-### Content
+## Content
 
 - main.py
     - gradio 실행
