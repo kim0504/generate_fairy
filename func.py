@@ -8,6 +8,7 @@ from io import BytesIO
 import initial, image_generate
 import audio_generate as audio
 import firebase
+
 count = 1
 
 genre = ''
@@ -41,7 +42,6 @@ def generate_select(state, state_chatbot, idx):
         temperature=degree
     )
     msg = res['choices'][0]['message']['content']
-    print(msg)
     new_state = [{
         'role': 'user',
         'content': firebase.fairy_dict[idx]['content']
@@ -110,22 +110,14 @@ def generate(state, state_chatbot, text):
         filename = audio.generate([msg])
         return gr.update(visible=False), gr.update(visible=True), state, state_chatbot, msg, *select, img, filename
 
-def load_save_fairy():
-    with open('./save_fairy.json', 'r', encoding='UTF8') as f:
-        jso = json.load(f)
-    return jso
-
 def save():
-    fairy = load_save_fairy()
+    fairy = firebase.get_save()
     os.mkdir(f"./save_image/{len(fairy)}")
-    print(temp_image)
     for idx,img in enumerate(temp_image):
         res = requests.get(img)
         get_img = Image.open(BytesIO(res.content))
         get_img.save(f"./save_image/{len(fairy)}/{idx}.jpg")
-    fairy[str(len(fairy))] = generate_info
-    with open('./save_fairy.json', 'w', encoding='UTF8') as f:
-        json.dump(fairy, f, indent=2, ensure_ascii=False)
+    firebase.save(generate_info)
 
 def load_prev_content():
     global load_page
@@ -152,8 +144,6 @@ def move_new_set():
 
 def move_new(state, state_chatbot, idx):
     aaa = generate_select(state, state_chatbot, idx)
-    for h in aaa:
-        print(h)
     return *aaa, gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
 
 def move_load_list():
@@ -162,6 +152,6 @@ def move_load_list():
 
 def move_load(idx):
     global load_fairy, load_select_idx
-    load_fairy = load_save_fairy()[idx]
+    load_fairy = firebase.get_save()[idx]
     load_select_idx = idx
     return image_generate.open("/".join([initial.save_image_path, idx, "0.jpg"])), load_fairy['content'][0], gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=True)
